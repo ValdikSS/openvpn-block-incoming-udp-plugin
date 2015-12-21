@@ -289,7 +289,7 @@ BOOL PacketFilter::StartFirewall()
 	pAdapterInfo = (IP_ADAPTER_INFO *)MALLOC(sizeof(IP_ADAPTER_INFO));
 	if (pAdapterInfo == NULL) {
 		printf("Error allocating memory needed to call GetAdaptersinfo\n");
-		return 1;
+		return 2;
 	}
 	// Make an initial call to GetAdaptersInfo to get
 	// the necessary size into the ulOutBufLen variable
@@ -298,7 +298,7 @@ BOOL PacketFilter::StartFirewall()
 		pAdapterInfo = (IP_ADAPTER_INFO *)MALLOC(ulOutBufLen);
 		if (pAdapterInfo == NULL) {
 			printf("Error allocating memory needed to call GetAdaptersinfo\n");
-			return 2;
+			return 3;
 		}
 	}
 
@@ -335,7 +335,7 @@ BOOL PacketFilter::StartFirewall()
 	}
 	else {
 		printf("GetAdaptersInfo failed with error: %d\n", dwRetVal);
-		return 3;
+		return 4;
 	}
 	if (pAdapterInfo)
 		FREE(pAdapterInfo);
@@ -441,7 +441,7 @@ BOOL PacketFilter::StartFirewall()
 		if (pAddresses) {
 			FREE(pAddresses);
 		}
-		return 4;
+		return 5;
 	}
 
 	if (pAddresses) {
@@ -451,7 +451,7 @@ BOOL PacketFilter::StartFirewall()
 
 	if (tapluids.size() <= 0) {
 		printf("No TAP adapters found!\n");
-		return 5;
+		return 6;
 	}
 
 	printf("Found %zd TAP adapters\n", tapluids.size());
