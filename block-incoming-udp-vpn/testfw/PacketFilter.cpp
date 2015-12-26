@@ -178,6 +178,35 @@ DWORD PacketFilter::AddRemoveFilter( bool bAdd )
 						Condition[1].conditionValue.type = FWP_UINT8;
 						Condition[1].conditionValue.uint8 = NlatUnicast;
 
+						// Deal with localhost first.
+						// Third condition. Match all loopback (localhost) data.
+						Condition[2].fieldKey = FWPM_CONDITION_FLAGS;
+						Condition[2].matchType = FWP_MATCH_EQUAL;
+						Condition[2].conditionValue.type = FWP_UINT32;
+						Condition[2].conditionValue.uint32 = FWP_CONDITION_FLAG_IS_LOOPBACK;
+						Filter.weight.type = FWP_UINT8;
+						Filter.weight.uint8 = 0xF;
+
+						dwFwAPiRetCode = ::FwpmFilterAdd0(m_hEngineHandle,
+							&Filter,
+							NULL,
+							&filterid);
+						printf("Filter (Permit IPv4 loopback) added with ID=%I64d\r\n", filterid);
+						filterids.push_back(filterid);
+
+						Filter.layerKey = FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6;
+
+						dwFwAPiRetCode = ::FwpmFilterAdd0(m_hEngineHandle,
+							&Filter,
+							NULL,
+							&filterid);
+						printf("Filter (Permit IPv6 loopback) added with ID=%I64d\r\n", filterid);
+						filterids.push_back(filterid);
+
+						Filter.layerKey = FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4;
+						Filter.weight.type = FWP_EMPTY;
+						// The end of localhost things.
+
 						// Third condition. Match remote IP addresses if they come
 						// from a LAN segment (e.g. 192.168.0.0 255.255.255.0 and others
 						// for IPv4, fd00::/8, fe80::/10 for IPv6).
